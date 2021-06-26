@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+    good_ubuntu:
+        build: .
+        volumes: 
+            - ./project:/home/user/project/
+        container_name: gem5_nvmain_ubuntu
+        tty: true
