@@ -80,7 +80,8 @@ class L3Cache(Cache):
     mshrs = 20
     tgts_per_mshr = 12
     write_buffers = 8
-    # replacement_policy = Param.BaseReplacementPolicy(RRIPRP(),"Replacement policy") # Q3: RRIP
+    #! RRIP
+    replacement_policy = Param.BaseReplacementPolicy(RRIPRP(),"Replacement policy") # Q3: RRIP
 
 class IOCache(Cache):
     assoc = 8
