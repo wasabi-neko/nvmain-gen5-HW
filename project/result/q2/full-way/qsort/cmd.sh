@@ -1,4 +1,5 @@
 #!/bin/bash
+# full-way
 gem5_path=/home/user/project/gem5
 result_path=/home/user/project/result/q2/full-way/qsort
 
