@@ -541,7 +541,7 @@
                         "pid": 100, 
                         "kvmInSE": false, 
                         "cxx_class": "Process", 
-                        "executable": "/home/user/project/benchmark/quicksort.out", 
+                        "executable": "/home/user/project/benchmark/smol-program.out", 
                         "drivers": [], 
                         "system": "system", 
                         "gid": 100, 
@@ -550,7 +550,7 @@
                         "maxStackSize": 67108864, 
                         "ppid": 0, 
                         "type": "Process", 
-                        "cwd": "/home/user/project/result/q2/full-way-true/qsort", 
+                        "cwd": "/home/user/project/result/q4/test-smol", 
                         "pgid": 100, 
                         "simpoint": 0, 
                         "euid": 100, 
@@ -558,7 +558,7 @@
                         "path": "system.cpu.workload", 
                         "name": "workload", 
                         "cmd": [
-                            "/home/user/project/benchmark/quicksort.out"
+                            "/home/user/project/benchmark/smol-program.out"
                         ], 
                         "errout": "cerr", 
                         "useArchPT": false, 
@@ -802,7 +802,7 @@
                 "clk_domain": "system.cpu_clk_domain", 
                 "power_model": [], 
                 "sequential_access": false, 
-                "assoc": 16384, 
+                "assoc": 16, 
                 "warmup_percentage": 0, 
                 "cxx_class": "BaseSetAssoc", 
                 "p_state_clk_gate_max": 1000000000000, 
@@ -826,7 +826,7 @@
             "name": "l3", 
             "p_state_clk_gate_bins": 20, 
             "sequential_access": false, 
-            "assoc": 16384
+            "assoc": 16
         }, 
         "cpu_voltage_domain": {
             "name": "cpu_voltage_domain", 

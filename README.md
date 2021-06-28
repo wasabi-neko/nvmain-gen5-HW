@@ -8,6 +8,14 @@ Bass \
                 Bass \
                     Kick \
                         Kick 
+> I am the bone of my computer.   \
+> Steel is my body, and coffee is my blood.  \
+> I have viewed over a thousand code.  \
+> Unknown to writeback.  \
+> Nor known to writeQueue.  \
+> Have withstood pain to write many code.  \
+> Yet, those hands will never hold anything.  \
+> So as I pray, unlimited COFFEE works.  \
 
 ## TODOs
 - [x] Q0: Gem5 + NVmain Build-up

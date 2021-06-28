@@ -364,7 +364,7 @@ BaseCache::recvTimingReq(PacketPtr pkt)
     // track time of availability of next prefetch, if any
     Tick next_pf_time = MaxTick;
 
-    if (satisfied) {
+    if (satisfied) {    //* HIT
         // if need to notify the prefetcher we have to do it before
         // anything else as later handleTimingReqHit might turn the
         // packet in a response
@@ -905,6 +905,8 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
     DPRINTF(Cache, "%s for %s %s\n", __func__, pkt->print(),
             blk ? "hit " + blk->print() : "miss");
 
+    DPRINTF(Cache, "cmd is WriteClean: %d\n", pkt->cmd == MemCmd::WriteClean);
+
     if (pkt->req->isCacheMaintenance()) {
         // A cache maintenance operation is always forwarded to the
         // memory below even if the block is found in dirty state.
@@ -916,6 +918,7 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
     }
 
     if (pkt->isEviction()) {
+        DPRINTF(Cache, "test Evict\n");
         // We check for presence of block in above caches before issuing
         // Writeback or CleanEvict to write buffer. Therefore the only
         // possible cases can be of a CleanEvict packet coming from above
@@ -927,6 +930,8 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
         WriteQueueEntry *wb_entry = writeBuffer.findMatch(pkt->getAddr(),
                                                           pkt->isSecure());
         if (wb_entry) {
+            DPRINTF(Cache, "Has wb_ebtry\b");
+
             assert(wb_entry->getNumTargets() == 1);
             PacketPtr wbPkt = wb_entry->getTarget()->pkt;
             assert(wbPkt->isWriteback());
@@ -943,6 +948,9 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
                 wbPkt->clearBlockCached();
                 return true;
             } else {
+                DPRINTF(Cache, "wb_entry not clean!\n");
+
+                //* Drity writeback here!
                 assert(pkt->cmd == MemCmd::WritebackDirty);
                 // Dirty writeback from above trumps our clean
                 // writeback... discard here
@@ -1016,6 +1024,9 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
         // go to next level.
         return false;
     } else if (pkt->cmd == MemCmd::WriteClean) {
+        DPRINTF(Cache, "test WriteClean\n");
+        // pkt->setWriteThrough();         //* force write through
+
         // WriteClean handling is a special case. We can allocate a
         // block directly if it doesn't exist and we can update the
         // block immediately. The WriteClean transfers the ownership
@@ -1023,6 +1034,7 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
         assert(blkSize == pkt->getSize());
 
         if (!blk) {
+            // * write miss
             if (pkt->writeThrough()) {
                 // if this is a write through packet, we don't try to
                 // allocate if the block is not present
@@ -1043,13 +1055,15 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
             }
         }
 
+        DPRINTF(Cache, "\nwrite through hit\n");
+
         // at this point either this is a writeback or a write-through
         // write clean operation and the block is already in this
         // cache, we need to update the data and the block flags
         assert(blk);
         // TODO: the coherent cache can assert(!blk->isDirty());
         if (!pkt->writeThrough()) {
-            blk->status |= BlkDirty;
+            blk->status |= BlkDirty;    //* set dirty 
         }
         // nothing else to do; writeback doesn't expect response
         assert(!pkt->needsResponse());
@@ -1062,6 +1076,12 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
             pkt->payloadDelay;
         // if this a write-through packet it will be sent to cache
         // below
+
+        //* Let the data writeback to next cache(until to the memory)
+        // writebackBlk(blk);      //* Add one line. 
+
+        //* when using writethrough method, you must write the data to memory.
+        //* So it is considered a write miss
         return !pkt->writeThrough();
     } else if (blk && (pkt->needsWritable() ? blk->isWritable() :
                        blk->isReadable())) {
@@ -1365,7 +1385,7 @@ BaseCache::writebackVisitor(CacheBlk &blk)
         Packet packet(&request, MemCmd::WriteReq);
         packet.dataStatic(blk.data);
 
-        memSidePort.sendFunctional(&packet);
+        memSidePort.sendFunctional(&packet);    //* send packet to memoery
 
         blk.status &= ~BlkDirty;
     }

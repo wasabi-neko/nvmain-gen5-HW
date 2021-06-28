@@ -197,6 +197,8 @@ Cache::doWritebacks(PacketList& writebacks, Tick forward_time)
         // We use forwardLatency here because we are copying writebacks to
         // write buffer.
 
+        DPRINTF(Cache, "%s for %s \n", __func__, wbPkt->print());
+
         // Call isCachedAbove for Writebacks, CleanEvicts and
         // WriteCleans to discover if the block is cached above.
         if (isCachedAbove(wbPkt)) {
@@ -236,6 +238,8 @@ Cache::doWritebacksAtomic(PacketList& writebacks)
 {
     while (!writebacks.empty()) {
         PacketPtr wbPkt = writebacks.front();
+        DPRINTF(Cache, "%s for %s \n", __func__, wbPkt->print());
+
         // Call isCachedAbove for both Writebacks and CleanEvicts. If
         // isCachedAbove returns true we set BLOCK_CACHED flag in Writebacks
         // and discard CleanEvicts.
