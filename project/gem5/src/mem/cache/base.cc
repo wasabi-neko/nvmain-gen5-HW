@@ -1053,7 +1053,7 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
         }
         // nothing else to do; writeback doesn't expect response
         assert(!pkt->needsResponse());
-        pkt->writeDataToBlock(blk->data, blkSize);
+        pkt->writeDataToBlock(blk->data, blkSize);              //* write data to block
         DPRINTF(Cache, "%s new state is %s\n", __func__, blk->print());
 
         incHitCount(pkt);
