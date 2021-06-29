@@ -1,6 +1,13 @@
 # Computer-Orgnization project2
 > NVmain-gem5
 
+## info
+- `project` 為外部與 container 連通的 volume
+- `/project/result/` 為個別問題的指令與結果存放的地方
+- 修改檔案可在 `git log` 修改紀錄中找到
+- 問題 「write-through」相關檔案在 `q5-write-through` branch 中，其餘問題都在 `master`
+
+
 ## TODOs
 - [x] Q0: Gem5 + NVmain Build-up
 - [x] Q1: Enable L3 last level cache in GEM5 + NVmain
@@ -46,8 +53,9 @@ replacement_policy = Param.BaseReplacementPolicy(RRIPRP(),"Replacement policy")
 
 ### Q4 (write through)
 
-還沒打，之後補 \
-重點：`BaseCache::writecleanBlk()`
+重點：`BaseCache::writecleanBlk()` \
+在 write hit 後，生成 writeclean packet 送給 writebacks \
+writeclean 會一路往下 writeback 直到 memory \
 
 ### Bonus
 
