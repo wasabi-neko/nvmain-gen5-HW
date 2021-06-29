@@ -6,8 +6,8 @@
 - [x] Q1: Enable L3 last level cache in GEM5 + NVmain
 - [x] Q2: Config last level cache to 2-way and full and full-way associative ache and test performance.
 - [x] Q3: Modify last level cache policy based on RRIP
-- [x] Q4: Test the performance of write back and write through policy based on 4-wau associatve cache with isscc_pcm
-    -> see branch: `q5-write-through`. (accidentally named it q5 insteed q4)
+- [x] Q4: Test the performance of write back and write through policy based on 4-wau associatve cache with isscc_pcm  
+    - > see branch: `q5-write-through`. (accidentally named it q5 insteed q4)
 - Bonus
     - [ ] Design last level cache policy to reduce the energy consumption of pcm_based main memory
     - [ ] Baseline: LRU
@@ -22,9 +22,9 @@ then just 跟著教學做
 
 ### Q1 (Enable L3)
 
-- `gem5/config/common/Cache.py`
-- `gem5/config/common/CacheConfig.py`
-- `gem5/config/common/Options.py`
+- `gem5/configs/common/Caches.py`
+- `gem5/configs/common/CacheConfig.py`
+- `gem5/configs/common/Options.py`
 - `gem5/src/cpu/BaseCPU.py`
 - `project/gem5/src/mem/XBar.py`
 
@@ -37,11 +37,16 @@ then just 跟著教學做
 
 ### Q3 (change to RRIP)
 
-懶的打，之後補
+`gem5/configs/commonCaches.py` 中的 L3 Cache 加入: \
+```python3
+replacement_policy = Param.BaseReplacementPolicy(RRIPRP(),"Replacement policy")
+```
+
+`gem5/src/mem/cache/replacement_policies/ReplacementPolicies.py` 中列出了所有 Policy
 
 ### Q4 (write through)
 
-懶的打，之後補 \
+還沒打，之後補 \
 重點：`BaseCache::writecleanBlk()`
 
 ### Bonus
