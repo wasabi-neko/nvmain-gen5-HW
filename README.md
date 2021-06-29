@@ -6,6 +6,7 @@
 - `/project/result/` 為個別問題的指令與結果存放的地方
 - 修改檔案可在 `git log` 修改紀錄中找到
 - 問題 「write-through」相關檔案在 `q5-write-through` branch 中，其餘問題都在 `master`
+- gem5 與 NVmain 的 build 都設為 gitignore
 
 
 ## TODOs
