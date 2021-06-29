@@ -4,8 +4,8 @@ gem5_path=/home/user/project/gem5
 result_path=${PWD}
 
 hello=$(echo ${gem5_path}/tests/test-progs/hello/bin/x86/linux/hello)
-smol=/home/user/project/benchmark/smol-program.out
 qsort=/home/user/project/benchmark/quicksort.out
+mul=/home/user/project/benchmark/multiply.out
 arg="
     --cpu-type=TimingSimpleCPU
     --caches --l2cache --l3cache
@@ -14,5 +14,5 @@ arg="
     --nvmain-config=/home/user/project/NVmain/Config/PCM_ISSCC_2012_4GB.config
 "
 
-${gem5_path}/build/X86/gem5.opt --debug-flags=Cache ${gem5_path}/configs/example/se.py -c ${smol} ${arg} > ${result_path}/debug-result
-# ${gem5_path}/build/X86/gem5.opt --debug-flags=CacheVerbose ${gem5_path}/configs/example/se.py -c ${hello} ${arg} > ${result_path}/debug-result
+# ${gem5_path}/build/X86/gem5.opt --debug-flags=Cache ${gem5_path}/configs/example/se.py -c ${qsort} ${arg} > ${result_path}/debug-result
+${gem5_path}/build/X86/gem5.opt ${gem5_path}/configs/example/se.py -c ${mul} ${arg} > ${result_path}/result

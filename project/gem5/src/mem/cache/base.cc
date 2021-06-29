@@ -852,7 +852,7 @@ BaseCache::satisfyRequest(PacketPtr pkt, CacheBlk *blk, bool, bool)
         // Modified state) even if we are a failed StoreCond so we
         // supply data to any snoops that have appended themselves to
         // this cache before knowing the store will fail.
-        blk->status |= BlkDirty;
+        blk->status |= BlkDirty;     //* no dirty in write through.... maybe?
         DPRINTF(CacheVerbose, "%s for %s (write)\n", __func__, pkt->print());
     } else if (pkt->isRead()) {
         if (pkt->isLLSC()) {
@@ -904,8 +904,6 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
 
     DPRINTF(Cache, "%s for %s %s\n", __func__, pkt->print(),
             blk ? "hit " + blk->print() : "miss");
-
-    DPRINTF(Cache, "cmd is WriteClean: %d\n", pkt->cmd == MemCmd::WriteClean);
 
     if (pkt->req->isCacheMaintenance()) {
         // A cache maintenance operation is always forwarded to the
@@ -1024,8 +1022,7 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
         // go to next level.
         return false;
     } else if (pkt->cmd == MemCmd::WriteClean) {
-        DPRINTF(Cache, "test WriteClean\n");
-        // pkt->setWriteThrough();         //* force write through
+        DPRINTF(Cache, "test WriteClean\n");    //* Well... it didn't happend. It will only be raised by some special thing
 
         // WriteClean handling is a special case. We can allocate a
         // block directly if it doesn't exist and we can update the
@@ -1055,15 +1052,13 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
             }
         }
 
-        DPRINTF(Cache, "\nwrite through hit\n");
-
         // at this point either this is a writeback or a write-through
         // write clean operation and the block is already in this
         // cache, we need to update the data and the block flags
         assert(blk);
         // TODO: the coherent cache can assert(!blk->isDirty());
         if (!pkt->writeThrough()) {
-            blk->status |= BlkDirty;    //* set dirty 
+            blk->status |= BlkDirty;
         }
         // nothing else to do; writeback doesn't expect response
         assert(!pkt->needsResponse());
@@ -1077,8 +1072,6 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
         // if this a write-through packet it will be sent to cache
         // below
 
-        //* Let the data writeback to next cache(until to the memory)
-        // writebackBlk(blk);      //* Add one line. 
 
         //* when using writethrough method, you must write the data to memory.
         //* So it is considered a write miss
@@ -1089,7 +1082,13 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
         incHitCount(pkt);
         satisfyRequest(pkt, blk);
         maintainClusivity(pkt->fromCache(), blk);
+        DPRINTF(Cache, "HIT!!!!!\n");
 
+        //* It seems work! :)
+        if (blk->isWritable()) {
+            PacketPtr writeclean_pkt = writecleanBlk(blk, pkt->req->getDest(), pkt->id);
+            writebacks.push_back(writeclean_pkt);
+        }
         return true;
     }
 
@@ -1098,6 +1097,7 @@ BaseCache::access(PacketPtr pkt, CacheBlk *&blk, Cycles &lat,
 
     incMissCount(pkt);
 
+    //* LLSC -> load-linked store-conditional
     if (!blk && pkt->isLLSC() && pkt->isWrite()) {
         // complete miss on store conditional... just give up now
         pkt->req->setExtraData(0);
