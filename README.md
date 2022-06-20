@@ -2,6 +2,7 @@
 > NVmain-gem5
 
 ## info
+- > [討論筆記](https://hackmd.io/@hami-duck/HJ9clQUju)
 - `project` 為外部與 container 連通的 volume
 - `/project/result/` 為個別問題的指令與結果存放的地方
 - 修改檔案可在 `git log` 修改紀錄中找到
@@ -25,7 +26,7 @@
 
 ### Q0 (Build up)
 
-I use docker container for simulate the ubuntu:18.04 env  
+I use docker container to simulate the ubuntu:18.04 env  
 then just 跟著教學做
 
 ### Q1 (Enable L3)
